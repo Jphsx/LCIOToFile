@@ -208,12 +208,12 @@ void LCIOToFile::findMCTrack(Track* t){
 	for(unsigned int i =0; i<_mcpartvec.size(); i++){
 		MCParticle* mcp = _mcpartvec.at(i);
 		if(mcp->getCharge() == 0) continue;
-		double* mcvtx = mcp->getVertex();
-		double* mcpp = mcp->getMomentum();
+		const double* mcvtx = mcp->getVertex();
+		const double* mcpp = mcp->getMomentum();
 		//use same ref as track
 		const float* ref = t->getReferencePoint();
 		double pt = sqrt(mcpp[1]*mcpp[1] + mcpp[0]*mcpp[0]);
-
+		double q = (double)mcp->getCharge();
 
 		double d0mc = -(mcvtx[0] - (double)ref[0])*sin(phi) + (mcvtx[1] - (double)ref[1])*cos(phi);
 		double phimc = acos(mcpp[0]/pt);
@@ -261,7 +261,7 @@ void LCIOToFile::processEvent( LCEvent * evt ) {
    //write to file stuff
     if(_RW == 2){
 	FindTracks(evt);
-	FindMCParticles( LCEvent* evt );
+	FindMCParticles( evt );
  	file<<nEvt<<" "<<_trackvec.size()<<std::endl;
 
 	//loop over tracks
