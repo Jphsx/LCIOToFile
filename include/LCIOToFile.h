@@ -73,6 +73,8 @@ using namespace lcio;
    //need to no BField to calculate stuff
    double BField{};
 
+//filestreams
+	std::ofstream file;
  
   
 // _inputTrackCollectionName 

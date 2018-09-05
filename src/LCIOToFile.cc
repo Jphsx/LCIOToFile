@@ -13,10 +13,12 @@ LCIOToFile::LCIOToFile() : Processor("LCIOToFile") {
 	                             _printing,
 	                             (int)5 ) ;
 
+	
+   	std::string outFilename = "x.trks";
 	registerProcessorParameter( "outFilename" ,
 	                            "output flat file name"  ,
 	                             _outFilename,
-	                             "file.trks" ) ;
+	                             outFilename ) ;
 
 	registerProcessorParameter( "RW" ,
 	                            "Read from flat file = 1 or Write to flat file = 2"  ,
@@ -46,7 +48,7 @@ void LCIOToFile::init() {
                        << std::endl ;
 
   if(_RW= 2){
- 	std::ofstream file;
+ 	
   	file.open (_outFilename);
   }
 
