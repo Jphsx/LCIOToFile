@@ -1,0 +1,40 @@
+<!--#############################################################-->
+<!--#                                                           #-->
+<!--#     Example steering file for Marlin                      #-->
+<!--#   for created Reconstructed Particles from Tracks         #-->
+<!--#                                                      	#-->
+<!--#                                                           #-->
+<!--#         			                                #--> 
+<!--#                                                           #-->
+<!--#############################################################-->
+
+
+<marlin>
+	<execute>
+   	<processor name="MyTrackToReconstructedParticle"/>  
+ 	</execute>
+
+	<global>
+		<parameter name="LCIOInputFiles"> /pnfs/desy.de/ilc/prod/ilc/mc-opt/ild/rec/calib/resonance/ILD_l5_o1_v02_nobg/v01-19-05-p01/u038/rv01-19-05-p01.sv01-19-05-p01.mILD_l5_o1_v02_nobg.PJpsi_muPmuM_20Gev.n001_1.d_rec_u038.slcio </parameter>
+   		<parameter name="SkipNEvents" value="0" />
+   		<parameter name="MaxRecordNumber" value="0" /> <!-- 0 is all events -->
+   		<parameter name="SupressCheck" value="false" />
+   		<parameter name="GearXMLFile" value="gear_ILD_l5_o1_v02_dd4hep.xml" />
+   		<parameter name="Verbosity"    options= "DEBUG0-4,MESSAGE0-4,WARNING0-4,ERROR0-4,SILENT"> DEBUG </parameter>
+ 	</global>
+	
+	<processor name="MyTrackToReconstructedParticle" type="TrackToReconstructedParticle">   
+		<!-- tree parameters -->
+		<parameter name="Pdgs" type="IntVec"> 13 -13 </parameter>
+		<parameter name="Charges" type="IntVec"> 1 -1 </parameter>
+		<parameter name="Masses" type="FloatVec"> .1056583715 .1056583715  </parameter>
+
+		<!-- input/output collection names -->
+		<parameter name="InputTrackCollectionName" value="MarlinTrkTracks" />
+		
+		<parameter name="OutputParticleCollectionName" type="string" lcioOutType="ReconstructedParticle">NewPfoCol</parameter>
+   
+ 	</processor>
+
+
+</marlin>
