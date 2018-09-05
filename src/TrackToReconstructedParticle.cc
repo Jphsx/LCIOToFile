@@ -13,10 +13,15 @@ LCIOToFile::LCIOToFile() : Processor("LCIOToFile") {
 	                             _printing,
 	                             (int)5 ) ;
 
-	registerProcessorParameter( "Filename" ,
-	                            "Print certain messages"  ,
-	                             _filename,
+	registerProcessorParameter( "outFilename" ,
+	                            "output flat file name"  ,
+	                             _outfilename,
 	                             "file.trks" ) ;
+
+	registerProcessorParameter( "RW" ,
+	                            "Read from flat file = 1 or Write to flat file = 2"  ,
+	                             _RW,
+	                            0 ) ;
 	
 
    	std::string inputTrackCollectionName = "x";
@@ -40,8 +45,10 @@ void LCIOToFile::init() {
   streamlog_out(DEBUG) << "   init called  "
                        << std::endl ;
 
-  ofstream file;
-  file.open (_filename);
+  if(_RW= 2){
+ 	 ofstream file;
+  	file.open (_outfilename);
+  }
 
  
 
@@ -143,12 +150,14 @@ void LCIOToFile::processEvent( LCEvent * evt ) {
 // = new LCCollectionVec(LCIO::RECONSTRUCTEDPARTICLE);
  FindTracks(evt);
   
-  LCCollectionVec * partCollection = new LCCollectionVec(LCIO::RECONSTRUCTEDPARTICLE);
+ // LCCollectionVec * partCollection = new LCCollectionVec(LCIO::RECONSTRUCTEDPARTICLE);
  //EVENT::LCCollection* partCollection = evt->getCollection("NewPfoCol");
 
   streamlog_out(MESSAGE) << " start processing event " << std::endl;
  
 
+   //write to file stuff
+    if(_RW == 2){
  	std::file<<nEvt<<" "<<_trackvec.size()<<std::endl;
 
 	//loop over tracks
@@ -162,6 +171,7 @@ void LCIOToFile::processEvent( LCEvent * evt ) {
 		std::file<< 0.0 <<" "<<0.0<<" "<<0.0<<std::endl;
 		
 	}
+    }
 
   
 
@@ -169,11 +179,13 @@ void LCIOToFile::processEvent( LCEvent * evt ) {
 
   // Add new collection to event
 //comment this next line when appending to collection
-  evt->addCollection(partCollection , _outputParticleCollectionName.c_str() ); 
+ // evt->addCollection(partCollection , _outputParticleCollectionName.c_str() ); 
  std::cout << "======================================== event " << nEvt << std::endl ;
 
 }
 void LCIOToFile::end(){
-	 out.close();
+	if(_RW == 2){
+		file.close();
+	}
 }
 
