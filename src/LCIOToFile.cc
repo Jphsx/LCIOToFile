@@ -234,11 +234,11 @@ void LCIOToFile::findMCTrack(Track* t){
 
 		//allow all matching with 1.5sigma for every parameter
 		double factor = 3.0;
-		if( (fabs(d0mc-d0) < factor*errors.at(0)) &&
-		    (fabs(phimc-phi) < factor*errors.at(1)) &&
-		    (fabs(ommc-om) < factor*errors.at(2)) &&
-		    (fabs(z0mc-z0) < factor*errors.at(3)) &&
-		    (fabs(tlmc-tl) < factor*errors.at(4)) ){
+		if(// (fabs(d0mc-d0) < factor*errors.at(0)) &&
+		   // (fabs(phimc-phi) < factor*errors.at(1)) &&
+		    (fabs(ommc-om) < factor*errors.at(2)) ){
+		   // (fabs(z0mc-z0) < factor*errors.at(3)) &&
+		    //(fabs(tlmc-tl) < factor*errors.at(4)) ){
 		
 			std::cout<<"found match at index "<<i<<std::endl;
 		}
