@@ -187,8 +187,9 @@ std::vector<double> LCIOToFile::getTrackXYZ(Track* t){
 	//do things
 	return xyz;
 }
-void LCIOToFile::findMCTrack(Track* t){
+std::vector<double> LCIOToFile::findMCTrack(Track* t){
 	
+	//returns the track parameters and vertex of the mcparticle
 	std::vector<float> cov = t->getCovMatrix();
 	std::vector<double> errors{};
 	errors.push_back(sqrt(cov.at(0)));
@@ -203,8 +204,9 @@ void LCIOToFile::findMCTrack(Track* t){
   	const double eB = BField*c*mm2m*eV2GeV;
 
 	//try to match
-	int indexOfMatch = -1;
-	
+	//int indexOfMatch = -1;
+	std::vector<double> mcvec{};//5 track params and xyz	
+
 	for(unsigned int i =0; i<_mcpartvec.size(); i++){
 		MCParticle* mcp = _mcpartvec.at(i);
 		if(mcp->getCharge() == 0) continue;
@@ -241,9 +243,21 @@ void LCIOToFile::findMCTrack(Track* t){
 		    //(fabs(tlmc-tl) < factor*errors.at(4)) ){
 		
 			std::cout<<"found match at index "<<i<<std::endl;
+			//indexOfMatch = i;
+			mcvec.push_back(d0mc);
+			mcvec.push_back(phimc);
+			mcvec.push_back(ommc);
+			mcvec.push_back(z0mc);
+			mcvec.push_back(tlmc);
+			mcvec.push_back(mcvtx[0]);
+			mcvec.push_back(mcvtx[1]);
+			mcvec.push_back(mcvtx[2]);
 		}
 		
 	}
+	//MCParticle* mcp = _mcpartvec.at(indexOfMatch);
+	//return indexOfMatch;
+	return mcvec;
 	
 
 }
@@ -275,8 +289,14 @@ void LCIOToFile::processEvent( LCEvent * evt ) {
 		file<< sqrt(cov.at(0)) <<" "<< sqrt(cov.at(2)) <<" "<<sqrt(cov.at(5))<<" "<<sqrt(cov.at(9))<<" "<<sqrt(cov.at(14))<< " ";
 		file<< 0.0 <<" "<<0.0<<" "<<0.0<<std::endl;
 
-		findMCTrack(t);
+		std::vector<double> mcvec = findMCTrack(t);
 		
+		if(mcvec.size() == 0){
+			file<< -1 <<" "<<-1<<" "<<-1<<" "<<-1<<" "<<-1<<" "<<-1<<" "<<-1<<" "<<-1<<std::endl;
+		}
+		else{
+			file<<mcvec.at(0)<<" "<<mcvec.at(1)<<" "<<mcvec.at(2)<<" "<<mcvec.at(3)<<" "<<mcvec.at(4)<<" "<<mcvec.at(5)<<" "<<mcvec.at(6)<<" "<<mcvec.at(7)<<std::endl;
+		}
 	}
     }
 
