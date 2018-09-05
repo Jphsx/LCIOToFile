@@ -233,7 +233,7 @@ void LCIOToFile::findMCTrack(Track* t){
 		std::cout<<d0<<" "<<phi<<" "<<om<<" "<<z0<<" "<<tl<<std::endl;
 
 		//allow all matching with 1.5sigma for every parameter
-		double factor = 1.5;
+		double factor = 3.0;
 		if( (fabs(d0mc-d0) < factor*errors.at(0)) &&
 		    (fabs(phimc-phi) < factor*errors.at(1)) &&
 		    (fabs(ommc-om) < factor*errors.at(2)) &&
