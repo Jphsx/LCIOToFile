@@ -215,8 +215,9 @@ void LCIOToFile::findMCTrack(Track* t){
 		double pt = sqrt(mcpp[1]*mcpp[1] + mcpp[0]*mcpp[0]);
 		double q = (double)mcp->getCharge();
 
-		double d0mc = -(mcvtx[0] - (double)ref[0])*sin(phi) + (mcvtx[1] - (double)ref[1])*cos(phi);
 		double phimc = acos(mcpp[0]/pt);
+		double d0mc = -(mcvtx[0] - (double)ref[0])*sin(phimc) + (mcvtx[1] - (double)ref[1])*cos(phimc);
+		
 		double ommc = q*eB/pt;
 		double z0mc = mcvtx[2];
 		double tlmc = mcpp[2]/pt;
