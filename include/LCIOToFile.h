@@ -1,4 +1,5 @@
 #include "marlin/Processor.h"
+#include "EVENT/MCParticle.h"
 #include "EVENT/Track.h"
 #include "lcio.h"
 #include "TFile.h"
@@ -6,6 +7,7 @@
 #include "IMPL/LCCollectionVec.h"
 #include "IMPL/ParticleIDImpl.h"
 #include "IMPL/ReconstructedParticleImpl.h"
+
 #include <marlin/Global.h>
 #include "gear/BField.h"
 #include "TLorentzVector.h"
@@ -66,6 +68,7 @@ using namespace lcio;
   
   //vector to hold the tracks for the event
   std::vector<Track*> _trackvec{};
+  std::vector<MCParticle*> _mcpartvec{};
   int   _printing{};
   std::string _outFilename{};
   int _RW{};
@@ -80,5 +83,6 @@ using namespace lcio;
 // _inputTrackCollectionName 
   std::string _outputParticleCollectionName{};
   std::string _inputTrackCollectionName{};
+  std::string _inputMcParticleCollectionName{};
 //  std::string m_rootFile{};
 };

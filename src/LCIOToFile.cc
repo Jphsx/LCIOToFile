@@ -33,6 +33,13 @@ LCIOToFile::LCIOToFile() : Processor("LCIOToFile") {
                                  _inputTrackCollectionName,
                                  inputTrackCollectionName);  
 
+	std::string inputMcParticleCollectionName = "x";
+	registerInputCollection( LCIO::MCPARTICLE,
+				"McParticleCollectionName" ,
+				"Name of the MCParticle input collection" ,
+				_inputMcParticleCollectionName,
+				inputMcParticleCollectionName);
+
   	std::string outputParticleCollectionName = "x";
   	registerOutputCollection( LCIO::RECONSTRUCTEDPARTICLE,
                              	"OutputParticleCollectionName" ,
@@ -99,6 +106,40 @@ bool LCIOToFile::FindTracks( LCEvent* evt ) {
 
   return tf;
 }
+bool treeFitter::FindMCParticles( LCEvent* evt ){
+   
+	bool collectionFound = false;
+
+  	// clear old global MCParticle vector
+  	_mcpartvec.clear();
+  	typedef const std::vector<std::string> StringVec ;
+  	StringVec* strVec = evt->getCollectionNames() ;
+
+	//iterate over collections, find the matching name
+  	for(StringVec::const_iterator itname=strVec->begin(); itname!=strVec->end(); itname++){    
+    
+		//if found print name and number of elements 
+		if(*itname==_inputMcParticleCollectionName){
+      			LCCollection* collection = evt->getCollection(*itname);
+     			std::cout<< "Located MC Collection "<< *itname<< " with "<< collection->getNumberOfElements() << " elements " <<std::endl;
+      			collectionFound = true;
+      
+			//add the collection elements to the global vector
+			for(int i=0;i<collection->getNumberOfElements();i++){
+				MCParticle* mcPart = dynamic_cast<MCParticle*>(collection->getElementAt(i));
+				_mcpartvec.push_back(mcPart);
+
+       
+      			}
+    		}
+  	}
+
+  	if(!collectionFound){
+		std::cout<<"MC Collection "<< _inputMcParticleCollectionName << "not found"<<std::endl;
+	}
+  
+  	return collectionFound;
+}
 std::vector<double> LCIOToFile::getTrackPxPyPz(Track* t){
 	const double c = 2.99792458e8; // m*s^-1        
   	const double mm2m = 1e-3;
@@ -146,11 +187,70 @@ std::vector<double> LCIOToFile::getTrackXYZ(Track* t){
 	//do things
 	return xyz;
 }
+void LCIOToFile::findMCTrack(Track* t){
+	
+	std::vector<float> cov = t->getCovMatrix();
+	std::vector<double> errors{};
+	errors.push_back(sqrt(cov.at(0)));
+	errors.push_back(sqrt(cov.at(2)));
+	errors.push_back(sqrt(cov.at(5)));
+	errors.push_back(sqrt(cov.at(9)));
+	errors.push_back(sqrt(cov.at(14)));
 
+	const double c = 2.99792458e8; // m*s^-1        
+  	const double mm2m = 1e-3;
+  	const double eV2GeV = 1e-9;
+  	const double eB = BField*c*mm2m*eV2GeV;
+
+	//try to match
+	int indexOfMatch = -1;
+	
+	for(unsigned int i =0; i<_mcpartvec.size(); i++){
+		MCParticle* mcp = _mcpartvec.at(i);
+		if(mcp->getCharge() == 0) continue;
+		double* mcvtx = mcp->getVertex();
+		double* mcpp = mcp->getMomentum();
+		//use same ref as track
+		const float* ref = t->getReferencePoint();
+		double pt = sqrt(mcpp[1]*mcpp[1] + mcpp[0]*mcpp[0]);
+
+
+		double d0mc = -(mcvtx[0] - (double)ref[0])*sin(phi) + (mcvtx[1] - (double)ref[1])*cos(phi);
+		double phimc = acos(mcpp[0]/pt);
+		double ommc = q*eB/pt;
+		double z0mc = mcvtx[2];
+		double tlmc = mcpp[2]/pt;
+		
+		double d0 = t->getD0();
+		double phi = t->getPhi();
+		double om = t->getOmega();
+		double z0 = t->getZ0();
+		double tl = t->getTanLambda();
+
+		std::cout<<"comparing tracks: "<<std::endl;
+		std::cout<<d0mc<<" "<<phimc<<" "<<ommc<<" "<<z0mc<<" "<<tlmc<<std::endl;
+		std::cout<<d0<<" "<<phi<<" "<<om<<" "<<z0<<" "<<tl<<std::endl;
+
+		//allow all matching with 1.5sigma for every parameter
+		double factor = 1.5;
+		if( (fabs(d0mc-d0) < factor*errors.at(0)) &&
+		    (fabs(phimc-phi) < factor*errors.at(1)) &&
+		    (fabs(ommc-om) < factor*errors.at(2)) &&
+		    (fabs(z0mc-z0) < factor*errors.at(3)) &&
+		    (fabs(tlmc-tl) < factor*errors.at(4)) ){
+		
+			std::cout<<"found match at index "<<i<<std::endl;
+		}
+		
+	}
+	
+
+}
 void LCIOToFile::processEvent( LCEvent * evt ) {
  //FindMCParticles(evt);
 // = new LCCollectionVec(LCIO::RECONSTRUCTEDPARTICLE);
- FindTracks(evt);
+
+  
   
  // LCCollectionVec * partCollection = new LCCollectionVec(LCIO::RECONSTRUCTEDPARTICLE);
  //EVENT::LCCollection* partCollection = evt->getCollection("NewPfoCol");
@@ -160,6 +260,8 @@ void LCIOToFile::processEvent( LCEvent * evt ) {
 
    //write to file stuff
     if(_RW == 2){
+	FindTracks(evt);
+	FindMCParticles( LCEvent* evt );
  	file<<nEvt<<" "<<_trackvec.size()<<std::endl;
 
 	//loop over tracks
