@@ -67,7 +67,7 @@ using namespace lcio;
   //vector to hold the tracks for the event
   std::vector<Track*> _trackvec{};
   int   _printing{};
-  string _outfilename;
+  std::string _outfilename;
   int _RW;
 
    //need to no BField to calculate stuff

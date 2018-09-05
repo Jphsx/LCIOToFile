@@ -15,7 +15,7 @@ LCIOToFile::LCIOToFile() : Processor("LCIOToFile") {
 
 	registerProcessorParameter( "outFilename" ,
 	                            "output flat file name"  ,
-	                             _outfilename,
+	                             _outFilename,
 	                             "file.trks" ) ;
 
 	registerProcessorParameter( "RW" ,
@@ -46,8 +46,8 @@ void LCIOToFile::init() {
                        << std::endl ;
 
   if(_RW= 2){
- 	 ofstream file;
-  	file.open (_outfilename);
+ 	std::ofstream file;
+  	file.open (_outFilename);
   }
 
  
@@ -134,7 +134,7 @@ std::vector<double> LCIOToFile::getTrackPxPyPz(Track* t){
 
 std::vector<double> getTrackXYZ(Track* t){
 	std::vector<double> xyz(3);
-	const float* ref = t->getReferencePoint()
+	const float* ref = t->getReferencePoint();
 	double phi = t->getPhi();
 	double d0 = t->getD0();
 	double z0 = t->getZ0();
@@ -158,17 +158,17 @@ void LCIOToFile::processEvent( LCEvent * evt ) {
 
    //write to file stuff
     if(_RW == 2){
- 	std::file<<nEvt<<" "<<_trackvec.size()<<std::endl;
+ 	file<<nEvt<<" "<<_trackvec.size()<<std::endl;
 
 	//loop over tracks
 	for(unsigned int i =0; i<_trackvec.size(); i++){
 		Track* t = _trackvec.at(i);		
-		std::file<<t->getD0()<<" "<<t->getPhi()<<" "<<t->getOmega()<<" "<<t->getZ0()<<" "<<t->getTanLambda()<<" ";
+		file<<t->getD0()<<" "<<t->getPhi()<<" "<<t->getOmega()<<" "<<t->getZ0()<<" "<<t->getTanLambda()<<" ";
 		std::vector<double> xyz = getTrackXYZ(t);
-		std::file<<xyz.at(0)<<" "<<xyz.at(1)<<" "<<xyz.at(2)<<std::endl;
+		file<<xyz.at(0)<<" "<<xyz.at(1)<<" "<<xyz.at(2)<<std::endl;
 		std::vector<float> cov = t->getCovMatrix();
-		std::file<< sqrt(cov.at(0)) <<" "<< sqrt(cov.at(2)) <<" "<<sqrt(cov.at(5))<<" "<<sqrt(cov.at(9))<<" "<<sqrt(cov.at(14))<< " ";
-		std::file<< 0.0 <<" "<<0.0<<" "<<0.0<<std::endl;
+		file<< sqrt(cov.at(0)) <<" "<< sqrt(cov.at(2)) <<" "<<sqrt(cov.at(5))<<" "<<sqrt(cov.at(9))<<" "<<sqrt(cov.at(14))<< " ";
+		file<< 0.0 <<" "<<0.0<<" "<<0.0<<std::endl;
 		
 	}
     }
