@@ -134,7 +134,7 @@ std::vector<double> LCIOToFile::getTrackPxPyPz(Track* t){
 }
 
 
-std::vector<double> getTrackXYZ(Track* t){
+std::vector<double> LCIOToFile::getTrackXYZ(Track* t){
 	std::vector<double> xyz(3);
 	const float* ref = t->getReferencePoint();
 	double phi = t->getPhi();
