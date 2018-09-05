@@ -53,10 +53,12 @@ using namespace lcio;
   virtual void end() ;
 
   bool FindTracks(LCEvent* evt);
+  bool FindMCParticles( LCEvent* evt );
+
  
   std::vector<double> getTrackPxPyPz(Track* t);
   std::vector<double> getTrackXYZ(Track* t);
-  
+  void findMCTrack(Track* t);
   //printing utility
   void printTrack(Track* t);
 

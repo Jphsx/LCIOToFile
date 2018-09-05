@@ -106,7 +106,7 @@ bool LCIOToFile::FindTracks( LCEvent* evt ) {
 
   return tf;
 }
-bool treeFitter::FindMCParticles( LCEvent* evt ){
+bool LCIOToFile::FindMCParticles( LCEvent* evt ){
    
 	bool collectionFound = false;
 
@@ -273,6 +273,8 @@ void LCIOToFile::processEvent( LCEvent * evt ) {
 		std::vector<float> cov = t->getCovMatrix();
 		file<< sqrt(cov.at(0)) <<" "<< sqrt(cov.at(2)) <<" "<<sqrt(cov.at(5))<<" "<<sqrt(cov.at(9))<<" "<<sqrt(cov.at(14))<< " ";
 		file<< 0.0 <<" "<<0.0<<" "<<0.0<<std::endl;
+
+		findMCTrack(t);
 		
 	}
     }

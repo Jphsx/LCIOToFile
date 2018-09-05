@@ -30,6 +30,7 @@
 
 		<!-- input/output collection names -->
 		<parameter name="InputTrackCollectionName" value="MarlinTrkTracks" />
+		<parameter name="McParticleCollectionName" value="MCParticle" />
 		
 		<!--<parameter name="OutputParticleCollectionName" type="string" lcioOutType="ReconstructedParticle">NewPfoCol</parameter> -->
    
