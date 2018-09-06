@@ -278,7 +278,8 @@ void LCIOToFile::processEvent( LCEvent * evt ) {
 
   streamlog_out(MESSAGE) << " start processing event " << std::endl;
  
-	std::cout.precision(7);
+	std::cout.precision(8);
+	std::fixed();
    //write to file stuff
     if(_RW == 2){
 	FindTracks(evt);
@@ -295,8 +296,6 @@ void LCIOToFile::processEvent( LCEvent * evt ) {
 		int covrow = 0;
 		int inc = 2;
 		for(int i=0; i<15; i++){
-			
-			
 			file<<cov[i]<< " ";
 			if(i == covrow){
 				file<<std::endl;
@@ -305,7 +304,6 @@ void LCIOToFile::processEvent( LCEvent * evt ) {
 				
 			}
 		}
-		file<<std::endl;
 		std::vector<double> mcvec = findMCTrack(t);
 		
 		if(mcvec.size() == 0){
