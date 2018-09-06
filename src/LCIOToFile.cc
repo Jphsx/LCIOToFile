@@ -295,11 +295,12 @@ void LCIOToFile::processEvent( LCEvent * evt ) {
 		int covrow = 1;
 		for(int i=0; i<15; i++){
 			
+			
+			file<<cov[i]<< " ";
 			if(i == covrow){
 				file<<std::endl;
 				covrow += i;
 			}
-			file<<cov[i]<< " ";
 		}
 		file<<std::endl;
 		std::vector<double> mcvec = findMCTrack(t);
