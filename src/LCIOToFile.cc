@@ -279,7 +279,7 @@ void LCIOToFile::processEvent( LCEvent * evt ) {
   streamlog_out(MESSAGE) << " start processing event " << std::endl;
  
 	std::cout.precision(8);
-	std::fixed();
+	std::fixed;
    //write to file stuff
     if(_RW == 2){
 	FindTracks(evt);
