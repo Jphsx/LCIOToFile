@@ -257,6 +257,12 @@ std::vector<double> LCIOToFile::findMCTrack(Track* t){
 	}
 	//MCParticle* mcp = _mcpartvec.at(indexOfMatch);
 	//return indexOfMatch;
+	//look for -0 and get rid of it
+	for(unsigned int i=0; i<mcvec.size(); i++){
+		if(mcvec.at(i) == -0.0){
+			mcvec.at(i) = 0.0;
+		}
+	}
 	return mcvec;
 	
 
@@ -272,7 +278,7 @@ void LCIOToFile::processEvent( LCEvent * evt ) {
 
   streamlog_out(MESSAGE) << " start processing event " << std::endl;
  
-
+	std::cout.precision(7);
    //write to file stuff
     if(_RW == 2){
 	FindTracks(evt);
@@ -286,9 +292,16 @@ void LCIOToFile::processEvent( LCEvent * evt ) {
 		std::vector<double> xyz = getTrackXYZ(t);
 		file<<xyz.at(0)<<" "<<xyz.at(1)<<" "<<xyz.at(2)<<std::endl;
 		std::vector<float> cov = t->getCovMatrix();
-		file<< sqrt(cov.at(0)) <<" "<< sqrt(cov.at(2)) <<" "<<sqrt(cov.at(5))<<" "<<sqrt(cov.at(9))<<" "<<sqrt(cov.at(14))<< " ";
-		file<< 0.0 <<" "<<0.0<<" "<<0.0<<std::endl;
-
+		int covrow = 1;
+		for(int i=0; i<15; i++){
+			
+			if(i == covrow){
+				file<<std::endl;
+				covrow += i;
+			}
+			file<<cov[i]<< " ";
+		}
+		file<<std::endl;
 		std::vector<double> mcvec = findMCTrack(t);
 		
 		if(mcvec.size() == 0){
