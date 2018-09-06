@@ -292,15 +292,18 @@ void LCIOToFile::processEvent( LCEvent * evt ) {
 		std::vector<double> xyz = getTrackXYZ(t);
 		file<<xyz.at(0)<<" "<<xyz.at(1)<<" "<<xyz.at(2)<<std::endl;
 		std::vector<float> cov = t->getCovMatrix();
-		int covrow = 1;
+		int covrow = 0;
+		int inc = 2;
 		for(int i=0; i<15; i++){
 			
+			
+			file<<cov[i]<< " ";
 			if(i == covrow){
 				file<<std::endl;
-				covrow += i+1;
+				covrow += inc;
+				inc++;
+				
 			}
-			file<<cov[i]<< " ";
-			
 		}
 		file<<std::endl;
 		std::vector<double> mcvec = findMCTrack(t);
