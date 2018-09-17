@@ -217,17 +217,20 @@ std::vector<double> LCIOToFile::findMCTrack(Track* t){
 		double pt = sqrt(mcpp[1]*mcpp[1] + mcpp[0]*mcpp[0]);
 		double q = (double)mcp->getCharge();
 
-		double phimc = acos(mcpp[0]/pt);
+		///double phimc = acos(mcpp[0]/pt);//switch to atan2
+		double phimc = atan(mcpp[1],mcpp[0]);
+
 		double d0mc = -(mcvtx[0] - (double)ref[0])*sin(phimc) + (mcvtx[1] - (double)ref[1])*cos(phimc);
 		
 		double ommc = q*eB/pt;
-		double z0mc = mcvtx[2];
+		double z0mc = mcvtx[2] - ref[2];
 		double tlmc = mcpp[2]/pt;
 		
 		double d0 = t->getD0();
 		double phi = t->getPhi();
 		double om = t->getOmega();
 		double z0 = t->getZ0();
+		
 		double tl = t->getTanLambda();
 
 		std::cout<<"comparing tracks: "<<std::endl;
