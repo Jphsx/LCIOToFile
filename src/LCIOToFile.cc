@@ -283,13 +283,13 @@ void LCIOToFile::processEvent( LCEvent * evt ) {
 	//print out the parent mcparticle
 	MCParticle* parent;
 	for(int i=0; i<_mcpartvec.size(); i++){
-		if( _mcpartvec.at(i).getPDG() == _PDG ){
+		if( _mcpartvec.at(i)->getPDG() == _PDG ){
 			//found the parent
 			parent = _mcpartvec.at(i);
 			break;
 		}
 	}
-	file<< parent->getPDG() <<" "<< parent->getMomentum()[0] <<" "<< parent->getMomentum()[1]<< " "<< parent->getMomentum()[2]<<" "<< parent->getEnergy()<<" "<<parent->getMass()<<" "<<parent->getCharge()<<" "<<parent->getVertex()[0]<<" "<< parent->getVertex()[1]<<" "<<parentgetVertex()[2]<<" "<<parent->getEndpoint()[0]<<" "<< parent->getEndpoint()[1] <<" " << parent->getEndpoint()[2] <<std::endl;
+	file<< parent->getPDG() <<" "<< parent->getMomentum()[0] <<" "<< parent->getMomentum()[1]<< " "<< parent->getMomentum()[2]<<" "<< parent->getEnergy()<<" "<<parent->getMass()<<" "<<parent->getCharge()<<" "<<parent->getVertex()[0]<<" "<< parent->getVertex()[1]<<" "<<parent->getVertex()[2]<<" "<<parent->getEndpoint()[0]<<" "<< parent->getEndpoint()[1] <<" " << parent->getEndpoint()[2] <<std::endl;
 
 	//loop over tracks
 	for(unsigned int i =0; i<_trackvec.size(); i++){

@@ -58,7 +58,7 @@ using namespace lcio;
  
   std::vector<double> getTrackPxPyPz(Track* t);
   std::vector<double> getTrackXYZ(Track* t);
-  std::vector<double> findMCTrack(Track* t);
+  int findMCTrack(Track* t);
   //printing utility
   void printTrack(Track* t);
 
