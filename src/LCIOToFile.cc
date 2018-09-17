@@ -24,6 +24,11 @@ LCIOToFile::LCIOToFile() : Processor("LCIOToFile") {
 	                            "Read from flat file = 1 or Write to flat file = 2"  ,
 	                             _RW,
 	                            0 ) ;
+
+	registerProcessorParameter( "PDG",
+				    "parent mc pdg" ,
+				     _PDG,
+			             -1);
 	
 
    	std::string inputTrackCollectionName = "x";
@@ -187,9 +192,10 @@ std::vector<double> LCIOToFile::getTrackXYZ(Track* t){
 	//do things
 	return xyz;
 }
-std::vector<double> LCIOToFile::findMCTrack(Track* t){
+//returns the index of the matching monte carlo particle
+int LCIOToFile::findMCTrack(Track* t){
 	
-	//returns the track parameters and vertex of the mcparticle
+
 	std::vector<float> cov = t->getCovMatrix();
 	std::vector<double> errors{};
 	errors.push_back(sqrt(cov.at(0)));
@@ -204,9 +210,9 @@ std::vector<double> LCIOToFile::findMCTrack(Track* t){
   	const double eB = BField*c*mm2m*eV2GeV;
 
 	//try to match
-	//int indexOfMatch = -1;
-	std::vector<double> mcvec{};//5 track params and xyz	
+	int indexOfMatch = -1;
 
+	//loop over mcparticles
 	for(unsigned int i =0; i<_mcpartvec.size(); i++){
 		MCParticle* mcp = _mcpartvec.at(i);
 		if(mcp->getCharge() == 0) continue;
@@ -246,29 +252,14 @@ std::vector<double> LCIOToFile::findMCTrack(Track* t){
 		   // (fabs(tlmc-tl) < factor*errors.at(4)) ){
 		
 			std::cout<<"found match at index "<<i<<std::endl;
-			//indexOfMatch = i;
-			mcvec.push_back(d0mc);
-			mcvec.push_back(phimc);
-			mcvec.push_back(ommc);
-			mcvec.push_back(z0mc);
-			mcvec.push_back(tlmc);
-			mcvec.push_back(mcvtx[0]);
-			mcvec.push_back(mcvtx[1]);
-			mcvec.push_back(mcvtx[2]);
+			indexOfMatch = i;
+			return indexOfMatch;
+		
 		}
 		
 	}
-	//MCParticle* mcp = _mcpartvec.at(indexOfMatch);
-	//return indexOfMatch;
-	//look for -0 and get rid of it
-	for(unsigned int i=0; i<mcvec.size(); i++){
-		if(mcvec.at(i) == -0.0){
-			mcvec.at(i) = 0.0;
-		}
-	}
-	return mcvec;
 	
-
+	return indexOfMatch
 }
 void LCIOToFile::processEvent( LCEvent * evt ) {
  //FindMCParticles(evt);
@@ -289,6 +280,17 @@ void LCIOToFile::processEvent( LCEvent * evt ) {
 	FindMCParticles( evt );
  	file<<nEvt<<" "<<_trackvec.size()<<std::endl;
 
+	//print out the parent mcparticle
+	MCParticle* parent;
+	for(int i=0; i<_mcpartvec.size(); i++){
+		if( _mcpartvec.at(i).getPDG() == _PDG ){
+			//found the parent
+			parent = _mcpartvec.at(i);
+			break;
+		}
+	}
+	file<< parent->getPDG() <<" "<< parent->getMomentum()[0] <<" "<< parent->getMomentum()[1]<< " "<< parent->getMomentum()[2]<<" "<< parent->getEnergy()<<" "<<parent->getMass()<<" "<<parent->getCharge()<<" "<<parent->getVertex()[0]<<" "<< parent->getVertex()[1]<<" "<<parentgetVertex()[2]<<" "<<parent->getEndpoint()[0]<<" "<< parent->getEndpoint()[1] <<" " << parent->getEndpoint()[2] <<std::endl;
+
 	//loop over tracks
 	for(unsigned int i =0; i<_trackvec.size(); i++){
 		Track* t = _trackvec.at(i);		
@@ -307,13 +309,14 @@ void LCIOToFile::processEvent( LCEvent * evt ) {
 				
 			}
 		}
-		std::vector<double> mcvec = findMCTrack(t);
-		
-		if(mcvec.size() == 0){
+		//std::vector<double> mcvec = findMCTrack(t);
+		int mctrkindex = findMCTrack(t);
+		if(mctrkindex == -1){
 			file<< -1 <<" "<<-1<<" "<<-1<<" "<<-1<<" "<<-1<<" "<<-1<<" "<<-1<<" "<<-1<<std::endl;
 		}
 		else{
-			file<<mcvec.at(0)<<" "<<mcvec.at(1)<<" "<<mcvec.at(2)<<" "<<mcvec.at(3)<<" "<<mcvec.at(4)<<" "<<mcvec.at(5)<<" "<<mcvec.at(6)<<" "<<mcvec.at(7)<<std::endl;
+			MCParticle* mct = _mcpartvec(mctrkindex);
+			file<< mct->getPDG() <<" "<< mct->getMomentum()[0] <<" "<< mct->getMomentum()[1]<< " "<< mct->getMomentum()[2]<<" "<< mct->getEnergy()<<" "<<mct->getMass()<<" "<<mct->getCharge()<<" "<< mct->getVertex()[0] << " "<< mct->getVertex()[1] <<" "<<mct->getVertex()[2]<<std::endl;
 		}
 	}
     }

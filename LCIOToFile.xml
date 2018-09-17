@@ -27,6 +27,8 @@
 
 		<parameter name="outFilename" value="jpsimumu.trks" />
 		<parameter name="RW" value = "2" />
+		
+		<parameter name="PDG" value = "443" />
 
 		<!-- input/output collection names -->
 		<parameter name="InputTrackCollectionName" value="MarlinTrkTracks" />

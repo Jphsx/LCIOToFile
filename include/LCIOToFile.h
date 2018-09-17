@@ -74,6 +74,7 @@ using namespace lcio;
   int   _printing{};
   std::string _outFilename{};
   int _RW{};
+  int _PDG{};
 
    //need to no BField to calculate stuff
    double BField{};
