@@ -218,7 +218,7 @@ std::vector<double> LCIOToFile::findMCTrack(Track* t){
 		double q = (double)mcp->getCharge();
 
 		///double phimc = acos(mcpp[0]/pt);//switch to atan2
-		double phimc = atan(mcpp[1],mcpp[0]);
+		double phimc = atan2(mcpp[1],mcpp[0]);
 
 		double d0mc = -(mcvtx[0] - (double)ref[0])*sin(phimc) + (mcvtx[1] - (double)ref[1])*cos(phimc);
 		
