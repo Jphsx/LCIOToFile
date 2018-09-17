@@ -259,7 +259,7 @@ int LCIOToFile::findMCTrack(Track* t){
 		
 	}
 	
-	return indexOfMatch
+	return indexOfMatch;
 }
 void LCIOToFile::processEvent( LCEvent * evt ) {
  //FindMCParticles(evt);
@@ -315,7 +315,7 @@ void LCIOToFile::processEvent( LCEvent * evt ) {
 			file<< -1 <<" "<<-1<<" "<<-1<<" "<<-1<<" "<<-1<<" "<<-1<<" "<<-1<<" "<<-1<<std::endl;
 		}
 		else{
-			MCParticle* mct = _mcpartvec(mctrkindex);
+			MCParticle* mct = _mcpartvec.at(mctrkindex);
 			file<< mct->getPDG() <<" "<< mct->getMomentum()[0] <<" "<< mct->getMomentum()[1]<< " "<< mct->getMomentum()[2]<<" "<< mct->getEnergy()<<" "<<mct->getMass()<<" "<<mct->getCharge()<<" "<< mct->getVertex()[0] << " "<< mct->getVertex()[1] <<" "<<mct->getVertex()[2]<<std::endl;
 		}
 	}
