@@ -276,8 +276,8 @@ void LCIOToFile::processEvent( LCEvent * evt ) {
 	file<<std::scientific;
    //write to file stuff
     if(_RW == 2){
-	FindTracks(evt);
-	FindMCParticles( evt );
+	if(!FindTracks(evt)) return;
+	if(!FindMCParticles( evt )) return;
  	file<<nEvt<<" "<<_trackvec.size()<<std::endl;
 
 	//print out the parent mcparticle
