@@ -280,8 +280,14 @@ void LCIOToFile::processEvent( LCEvent * evt ) {
 	FindMCParticles( evt );
 
 	//if there are no tracks dont do anything
-	if(_trackvec.size() == 0 ) return;
-	if(_mcpartvec.size() == 0 ) return;
+	if(_trackvec.size() == 0 ){
+		nEvt++;
+	 	return;
+	}
+	if(_mcpartvec.size() == 0 ){
+		nEvt++;
+	 	return;
+	}
 
  	file<<nEvt<<" "<<_trackvec.size()<<std::endl;
 
